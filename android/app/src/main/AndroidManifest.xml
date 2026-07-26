@@ -26,7 +26,7 @@
         tools:targetApi="35">
 
         <activity
-            android:name=".ui.MainActivity"
+            android:name="com.localname.hider.ui.MainActivity"
             android:exported="true"
             android:launchMode="singleTop"
             android:theme="@style/Theme.LocalName">
@@ -37,20 +37,20 @@
         </activity>
 
         <activity
-            android:name=".ui.JarFixerActivity"
+            android:name="com.localname.hider.ui.JarFixerActivity"
             android:exported="false" />
 
         <activity
-            android:name=".zip.ZipViewerActivity"
+            android:name="com.localname.hider.zip.ZipViewerActivity"
             android:exported="false" />
 
         <service
-            android:name=".service.WatchdogService"
+            android:name="com.localname.hider.service.WatchdogService"
             android:exported="false"
             android:foregroundServiceType="dataSync" />
 
         <receiver
-            android:name=".service.BootReceiver"
+            android:name="com.localname.hider.service.BootReceiver"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
@@ -58,7 +58,7 @@
         </receiver>
 
         <receiver
-            android:name=".service.LiveUpdateReceiver"
+            android:name="com.localname.hider.service.LiveUpdateReceiver"
             android:exported="true">
             <intent-filter>
                 <action android:name="com.localname.action.LIVE_UPDATE" />
