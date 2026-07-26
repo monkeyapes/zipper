@@ -19,8 +19,8 @@ public class LiveUpdateReceiver extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
         if (!ACTION_LIVE_UPDATE.equals(intent.getAction())) return;
 
-        String hideTag = intent.getStringExtra("hide_tag");
-        if (hideTag == null) hideTag = "\u00a70\u00a7k";
+        String tmp = intent.getStringExtra("hide_tag");
+        final String hideTag = tmp != null ? tmp : "\u00a70\u00a7k";
 
         Log.i(TAG, "Live update triggered, hideTag=" + hideTag);
 

@@ -1,0 +1,13 @@
+{
+    "enabled": true,
+    "hide_tag_format": "§0§k",
+    "avatar_path": "",
+    "auto_inject": false,
+    "custom_avatar_enabled": false,
+    "mc_worlds_path": "",
+    "last_zip_path": "",
+    "last_extract_path": "",
+    "obfuscate_name": true,
+    "black_avatar": true,
+    "hide_cape": true
+}

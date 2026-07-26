@@ -3,5 +3,5 @@
 
 [[redirects]]
   from = "/download"
-  to = "https://github.com/YOUR_USER/zipper/releases/latest/download/Zipper.apk"
+  to = "https://github.com/monkeyapes/zipper/releases/latest/download/Zipper.apk"
   status = 302

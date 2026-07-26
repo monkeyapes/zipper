@@ -3,7 +3,8 @@
 | Asset | Description |
 |-------|-------------|
 | `Zipper.apk` | Android ZIP extractor + addon injector |
-| `LocalName.mcaddon` | Bedrock addon (hides name/avatar) |
+| `LocalName.mcaddon` | Bedrock addon extension |
+| `LocalName.exe` | Windows control center |
 |
 
 ## Release workflow
@@ -25,6 +26,9 @@ GitHub Actions builds everything and publishes to Releases.
 
 # Build addon .mcaddon
 python addon/build_addon.py
+
+# Build Windows EXE (control center)
+.\app\build.ps1
 
 # Build Android APK (requires Android SDK)
 cd android
