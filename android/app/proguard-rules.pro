@@ -1,0 +1,7 @@
+-keep class com.localname.hider.** { *; }
+-keep class org.json.** { *; }
+-dontwarn org.json.**
+-dontwarn android.**
+-keepattributes *Annotation*
+-keepattributes Signature
+-keepattributes EnclosingMethod

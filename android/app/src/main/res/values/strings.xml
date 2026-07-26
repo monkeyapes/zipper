@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Zipper</string>
+    <string name="enable_label">Protection Active</string>
+    <string name="inject_all">Inject All Worlds</string>
+    <string name="remove_all">Remove From All</string>
+    <string name="jar_fixer">JAR/APK Fixer</string>
+    <string name="open_zip">Open ZIP</string>
+    <string name="select_apk">Select APK</string>
+    <string name="fix_apk">Fix &amp; Inject</string>
+</resources>

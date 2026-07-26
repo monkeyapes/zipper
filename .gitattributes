@@ -1,0 +1,4 @@
+# Hide addon encoded data from diffs
+addon_encoded.b64 linguist-generated
+# Hide build files
+build/** linguist-vendored

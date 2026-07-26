@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Zipper — unzip anything, right on your phone</title>
+<meta name="description" content="Zipper is an offline ZIP extractor for Android. No cloud, no account, no ads.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230A0A0A'/%3E%3Crect x='27' y='10' width='10' height='30' rx='4' fill='%23FF6B1A'/%3E%3Ccircle cx='32' cy='44' r='9' fill='none' stroke='%23FF6B1A' stroke-width='4'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#0A0A0A;
+    --panel:#141414;
+    --panel-2:#1B1B1B;
+    --line: rgba(242,239,233,0.09);
+    --teeth:#C7CCD3;
+    --teeth-dark:#767B82;
+    --orange:#FF6B1A;
+    --ember:#FF8A47;
+    --paper:#F2EFE9;
+    --muted:#8C8A84;
+    --mono:'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    --body:'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  }
+
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    background:var(--ink);
+    color:var(--paper);
+    font-family:var(--body);
+    -webkit-font-smoothing:antialiased;
+    overflow-x:hidden;
+  }
+  ::selection{ background:var(--orange); color:var(--ink); }
+
+  a{ color:inherit; }
+  img,svg{ display:block; max-width:100%; }
+
+  :focus-visible{
+    outline:2px solid var(--orange);
+    outline-offset:3px;
+    border-radius:4px;
+  }
+
+  .wrap{ max-width:1120px; margin:0 auto; padding:0 24px; }
+
+  /* ---------- nav ---------- */
+  .nav{
+    position:sticky; top:0; z-index:40;
+    background:rgba(10,10,10,0.82);
+    backdrop-filter:blur(10px);
+    border-bottom:1px solid var(--line);
+  }
+  .nav .wrap{
+    display:flex; align-items:center; justify-content:space-between;
+    height:64px;
+  }
+  .brand{
+    display:flex; align-items:center; gap:10px;
+    font-family:var(--mono); font-weight:800; font-size:18px;
+    letter-spacing:0.02em;
+    text-decoration:none;
+  }
+  .brand .pull-mark{
+    width:18px; height:18px;
+    border-radius:5px;
+    background:linear-gradient(155deg,var(--ember),var(--orange));
+    box-shadow: inset 0 -2px 3px rgba(0,0,0,0.35), 0 1px 2px rgba(0,0,0,0.4);
+  }
+  .nav-tag{
+    font-family:var(--mono); font-size:11px; letter-spacing:0.12em;
+    color:var(--muted); border:1px solid var(--line);
+    padding:6px 10px; border-radius:999px;
+    text-transform:uppercase;
+  }
+
+  /* ---------- hero ---------- */
+  .hero{
+    padding:64px 0 24px;
+    display:grid;
+    grid-template-columns: 1.05fr 0.95fr;
+    gap:48px;
+    align-items:center;
+  }
+  .eyebrow{
+    font-family:var(--mono); font-size:13px; color:var(--orange);
+    letter-spacing:0.02em; margin:0 0 18px;
+  }
+  h1{
+    font-family:var(--mono); font-weight:800;
+    font-size:clamp(34px, 5.4vw, 58px);
+    line-height:1.04;
+    letter-spacing:-0.01em;
+    margin:0 0 20px;
+  }
+  h1 .accent{ color:var(--orange); }
+  .lede{
+    font-size:17px; line-height:1.6; color:#CFCBC2;
+    max-width:46ch; margin:0 0 32px;
+  }
+
+  .cta-row{ display:flex; align-items:center; gap:16px; flex-wrap:wrap; }
+  .btn{
+    font-family:var(--mono); font-weight:700; font-size:14px;
+    letter-spacing:0.01em;
+    display:inline-flex; align-items:center; gap:10px;
+    padding:15px 22px; border-radius:12px;
+    text-decoration:none; cursor:pointer; border:none;
+  }
+  .btn-primary{
+    background:linear-gradient(155deg,var(--ember),var(--orange));
+    color:var(--ink);
+    box-shadow: 0 10px 24px -10px rgba(255,107,26,0.55), inset 0 1px 0 rgba(255,255,255,0.25);
+    transition: transform .15s ease, box-shadow .15s ease;
+  }
+  .btn-primary:hover{ transform:translateY(-2px); box-shadow:0 14px 28px -10px rgba(255,107,26,0.65), inset 0 1px 0 rgba(255,255,255,0.25); }
+  .btn-primary:active{ transform:translateY(0px) scale(0.98); }
+  .btn-primary svg{ width:16px; height:16px; }
+
+  .meta-line{
+    font-family:var(--mono); font-size:12px; color:var(--muted);
+  }
+
+  /* ---------- zipper signature ---------- */
+  .zip-stage{
+    position:relative;
+    height:380px;
+    border-radius:20px;
+    background:var(--panel);
+    border:1px solid var(--line);
+    overflow:hidden;
+    touch-action:none;
+    user-select:none;
+  }
+  .zip-reveal{
+    position:absolute; inset:0;
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    gap:14px;
+    background:
+      radial-gradient(120% 90% at 50% 100%, rgba(255,107,26,0.16), transparent 60%),
+      var(--panel);
+  }
+  .zip-reveal .glyph{
+    width:64px; height:64px; border-radius:16px;
+    background:linear-gradient(155deg,var(--ember),var(--orange));
+    display:flex; align-items:center; justify-content:center;
+    box-shadow: inset 0 -4px 8px rgba(0,0,0,0.3), 0 12px 26px -10px rgba(255,107,26,0.5);
+  }
+  .zip-reveal .glyph svg{ width:32px; height:32px; }
+  .zip-reveal .open-word{
+    font-family:var(--mono); font-weight:800; font-size:26px; letter-spacing:0.02em;
+  }
+  .zip-reveal .open-sub{
+    font-family:var(--mono); font-size:12px; color:var(--muted);
+  }
+
+  .zip-cover{
+    position:absolute; inset:0;
+    background:
+      repeating-linear-gradient(115deg, rgba(255,255,255,0.03) 0 2px, transparent 2px 26px),
+      linear-gradient(180deg, var(--panel-2), var(--panel));
+    display:flex; align-items:center; justify-content:center;
+    will-change: clip-path;
+  }
+  .zip-cover .cover-word{
+    font-family:var(--mono); font-weight:800; font-size:15px;
+    color:var(--teeth-dark); letter-spacing:0.35em;
+    writing-mode:vertical-rl;
+  }
+
+  .zip-track{
+    position:absolute; left:50%; top:0; bottom:0;
+    width:52px; transform:translateX(-50%);
+    background:
+      repeating-linear-gradient(135deg, var(--teeth) 0 7px, var(--teeth-dark) 7px 14px);
+    box-shadow: inset 6px 0 10px -6px rgba(0,0,0,0.5), inset -6px 0 10px -6px rgba(0,0,0,0.5);
+    z-index:2;
+  }
+  .zip-teeth-seam{
+    position:absolute; left:50%; width:84px; height:22px;
+    transform:translate(-50%,-50%);
+    background:var(--teeth);
+    clip-path: polygon(
+      0 50%, 10% 0, 20% 50%, 30% 0, 40% 50%, 50% 0, 60% 50%, 70% 0, 80% 50%, 90% 0, 100% 50%,
+      90% 100%, 80% 50%, 70% 100%, 60% 50%, 50% 100%, 40% 50%, 30% 100%, 20% 50%, 10% 100%, 0 50%
+    );
+    box-shadow:0 2px 6px rgba(0,0,0,0.45);
+    z-index:3;
+  }
+  .zip-pull{
+    position:absolute; left:50%; width:46px; height:60px;
+    transform:translate(-50%,-8px);
+    z-index:5; cursor:grab;
+    touch-action:none;
+  }
+  .zip-pull:active{ cursor:grabbing; }
+  .zip-pull .tab-body{
+    width:100%; height:38px; border-radius:9px;
+    background:linear-gradient(155deg,var(--ember),var(--orange));
+    box-shadow: inset 0 -3px 5px rgba(0,0,0,0.35), inset 0 2px 2px rgba(255,255,255,0.35), 0 8px 16px -6px rgba(0,0,0,0.6);
+  }
+  .zip-pull .tab-ring{
+    width:20px; height:26px; margin:4px auto 0;
+    border-radius:10px;
+    border:5px solid var(--ember);
+    box-shadow:0 4px 10px -4px rgba(0,0,0,0.6);
+  }
+  .zip-hint{
+    position:absolute; left:50%; top:8px; transform:translateX(-50%);
+    font-family:var(--mono); font-size:10px; letter-spacing:0.1em;
+    color:var(--muted); text-transform:uppercase;
+    display:flex; align-items:center; gap:6px;
+    pointer-events:none; z-index:6;
+  }
+
+  /* ---------- metadata strip ---------- */
+  .meta-strip{
+    border-top:1px solid var(--line);
+    border-bottom:1px solid var(--line);
+    padding:22px 0;
+  }
+  .meta-grid{
+    display:grid; grid-template-columns:repeat(4,1fr);
+    gap:16px;
+  }
+  .meta-item{ font-family:var(--mono); font-size:12px; }
+  .meta-item .k{ color:var(--muted); letter-spacing:0.08em; }
+  .meta-item .v{ color:var(--paper); font-weight:700; margin-top:4px; }
+
+  /* ---------- features ---------- */
+  .section{ padding:88px 0; }
+  .section-head{ max-width:56ch; margin-bottom:48px; }
+  .section-eyebrow{
+    font-family:var(--mono); font-size:12px; color:var(--orange);
+    letter-spacing:0.1em; text-transform:uppercase; margin:0 0 12px;
+  }
+  h2{
+    font-family:var(--mono); font-weight:800; font-size:clamp(24px,3.4vw,34px);
+    margin:0; line-height:1.15;
+  }
+  .feature-grid{
+    display:grid; grid-template-columns:repeat(3,1fr); gap:20px;
+  }
+  .feature-card{
+    background:var(--panel);
+    border:1px solid var(--line);
+    border-radius:16px;
+    padding:26px;
+    transform-style:preserve-3d;
+    transition: transform .25s ease, border-color .25s ease, background .25s ease;
+  }
+  .feature-card:hover{
+    border-color:rgba(255,107,26,0.35);
+    background:var(--panel-2);
+  }
+  .feature-card .ico{
+    width:38px; height:38px; border-radius:10px;
+    background:rgba(255,107,26,0.12);
+    display:flex; align-items:center; justify-content:center;
+    margin-bottom:18px;
+  }
+  .feature-card .ico svg{ width:19px; height:19px; color:var(--orange); }
+  .feature-card h3{
+    font-family:var(--mono); font-size:15px; margin:0 0 10px;
+    letter-spacing:0.01em;
+  }
+  .feature-card p{
+    font-size:14px; line-height:1.6; color:#B9B6AE; margin:0;
+  }
+
+  /* ---------- download ---------- */
+  .download{
+    background:var(--panel);
+    border-top:1px solid var(--line);
+    border-bottom:1px solid var(--line);
+  }
+  .download-grid{
+    display:grid; grid-template-columns:1fr 1fr; gap:56px; align-items:start;
+  }
+  .steps{ list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:18px; }
+  .steps li{ display:flex; gap:14px; align-items:flex-start; font-size:14px; line-height:1.6; color:#CFCBC2;}
+  .steps .num{
+    font-family:var(--mono); font-weight:800; font-size:12px; color:var(--orange);
+    width:26px; height:26px; border-radius:8px; border:1px solid rgba(255,107,26,0.4);
+    display:flex; align-items:center; justify-content:center; flex-shrink:0;
+  }
+  .download-card{
+    background:var(--ink); border:1px solid var(--line); border-radius:16px; padding:28px;
+  }
+  .download-card .row1{ display:flex; align-items:center; gap:12px; margin-bottom:22px; }
+  .download-card .row1 .glyph{
+    width:44px; height:44px; border-radius:12px;
+    background:linear-gradient(155deg,var(--ember),var(--orange));
+    display:flex; align-items:center; justify-content:center; flex-shrink:0;
+  }
+  .download-card .row1 .glyph svg{ width:22px; height:22px; }
+  .download-card .name{ font-family:var(--mono); font-weight:800; font-size:16px; }
+  .download-card .ver{ font-family:var(--mono); font-size:12px; color:var(--muted); }
+  .placeholder-note{
+    font-family:var(--mono); font-size:11px; color:var(--muted);
+    border:1px dashed var(--line); border-radius:10px; padding:10px 12px;
+    margin-top:14px; line-height:1.5;
+  }
+
+  /* ---------- footer ---------- */
+  footer{ padding:40px 0 60px; }
+  .foot-row{
+    display:flex; align-items:center; justify-content:space-between;
+    flex-wrap:wrap; gap:16px;
+    font-family:var(--mono); font-size:12px; color:var(--muted);
+  }
+
+  @media (max-width: 860px){
+    .hero{ grid-template-columns:1fr; padding-top:40px; gap:32px; }
+    .zip-stage{ height:300px; }
+    .meta-grid{ grid-template-columns:repeat(2,1fr); row-gap:20px; }
+    .feature-grid{ grid-template-columns:1fr; }
+    .download-grid{ grid-template-columns:1fr; gap:32px; }
+    .section{ padding:56px 0; }
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    html{ scroll-behavior:auto; }
+    .btn-primary{ transition:none; }
+    .feature-card{ transition:none; }
+  }
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="wrap">
+    <a href="#top" class="brand"><span class="pull-mark"></span>ZIPPER</a>
+    <span class="nav-tag">Android · Offline</span>
+  </div>
+</nav>
+
+<header id="top" class="wrap hero">
+  <div>
+    <p class="eyebrow">// android apk · offline-first · zero cloud</p>
+    <h1>UNZIP ANYTHING.<br><span class="accent">RIGHT ON YOUR PHONE.</span></h1>
+    <p class="lede">Zipper opens ZIP archives straight from your downloads folder — no cloud round-trip, no account, no ads. Drag the pull to see how it feels.</p>
+    <div class="cta-row">
+      <a class="btn btn-primary" href="#download-apk" id="hero-cta">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v13"/><path d="M6 11l6 6 6-6"/><path d="M5 21h14"/></svg>
+        Download APK
+      </a>
+      <span class="meta-line">Link goes live soon</span>
+    </div>
+  </div>
+
+  <div class="zip-stage" id="zipStage" role="slider" tabindex="0"
+       aria-label="Drag to unzip the preview" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+    <div class="zip-reveal">
+      <div class="glyph">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#0A0A0A" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 8v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8"/><path d="M1 3h22v5H1z"/><path d="M10 12h4"/></svg>
+      </div>
+      <div class="open-word">OPEN.</div>
+      <div class="open-sub">that's the whole app</div>
+    </div>
+    <div class="zip-cover" id="zipCover">
+      <div class="cover-word">ZIPPER</div>
+    </div>
+    <div class="zip-track"></div>
+    <div class="zip-teeth-seam" id="zipSeam"></div>
+    <div class="zip-pull" id="zipPull">
+      <div class="tab-body"></div>
+      <div class="tab-ring"></div>
+    </div>
+    <div class="zip-hint" id="zipHint">↓ drag the pull</div>
+  </div>
+</header>
+
+<div class="meta-strip">
+  <div class="wrap meta-grid">
+    <div class="meta-item"><div class="k">TYPE:</div><div class="v">OFFLINE</div></div>
+    <div class="meta-item"><div class="k">FORMAT:</div><div class="v">.ZIP</div></div>
+    <div class="meta-item"><div class="k">PERMISSIONS:</div><div class="v">NONE REQUESTED</div></div>
+    <div class="meta-item"><div class="k">SIZE:</div><div class="v">~6 MB</div></div>
+  </div>
+</div>
+
+<section class="section">
+  <div class="wrap">
+    <div class="section-head">
+      <p class="section-eyebrow">Why it's built this way</p>
+      <h2>Small app. One job. Does it well.</h2>
+    </div>
+    <div class="feature-grid">
+      <div class="feature-card">
+        <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"/><circle cx="12" cy="12" r="3"/></svg></div>
+        <h3>See inside first</h3>
+        <p>Open a ZIP and browse what's in it before you extract a single file. No surprises, no mystery folders dumped on your home screen.</p>
+      </div>
+      <div class="feature-card">
+        <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="10" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div>
+        <h3>Nothing leaves your phone</h3>
+        <p>Every archive is read and extracted locally. Zipper doesn't ask for internet access, because it doesn't need it.</p>
+      </div>
+      <div class="feature-card">
+        <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="7" y="2" width="10" height="20" rx="2"/><path d="M11 18h2"/></svg></div>
+        <h3>Built for small screens</h3>
+        <p>Big tap targets and a file list that doesn't need pinch-zooming through a layout made for a desktop.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="download" id="download-apk">
+  <div class="wrap section" style="padding:72px 0;">
+    <div class="download-grid">
+      <div>
+        <p class="section-eyebrow">Installing outside the Play Store</p>
+        <h2 style="margin-bottom:26px;">Get Zipper on your phone</h2>
+        <ol class="steps">
+          <li><span class="num">1</span>Download the APK using the button on the right.</li>
+          <li><span class="num">2</span>When Android warns about installing from an unknown source, tap Settings and allow it for your browser or files app — this is normal for apps outside the Play Store.</li>
+          <li><span class="num">3</span>Open the downloaded file and tap Install.</li>
+        </ol>
+      </div>
+      <div class="download-card">
+        <div class="row1">
+          <div class="glyph">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#0A0A0A" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 8v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8"/><path d="M1 3h22v5H1z"/><path d="M10 12h4"/></svg>
+          </div>
+          <div>
+            <div class="name">Zipper.apk</div>
+            <div class="ver">v0.1.0 · Android 8.0+</div>
+          </div>
+        </div>
+        <a class="btn btn-primary" href="/download" style="width:100%; justify-content:center;" id="download-btn">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v13"/><path d="M6 11l6 6 6-6"/><path d="M5 21h14"/></svg>
+          Download APK
+        </a>
+        <div class="placeholder-note">// auto-redirects to latest GitHub release</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap foot-row">
+    <span>ZIPPER — an offline zip extractor</span>
+    <span>© 2026</span>
+  </div>
+</footer>
+
+<script>
+(function(){
+  var stage = document.getElementById('zipStage');
+  var cover = document.getElementById('zipCover');
+  var seam = document.getElementById('zipSeam');
+  var pull = document.getElementById('zipPull');
+  var hint = document.getElementById('zipHint');
+  var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  var trackTop = 0;
+  var trackHeight = 1;
+  var y = 0; // 0 = fully closed, trackHeight = fully open
+  var dragging = false;
+
+  function measure(){
+    trackHeight = stage.clientHeight;
+  }
+
+  function render(){
+    var openPx = Math.max(0, Math.min(y, trackHeight));
+    pull.style.top = openPx + 'px';
+    seam.style.top = openPx + 'px';
+    cover.style.clipPath = 'inset(' + openPx + 'px 0 0 0)';
+    var pct = Math.round((openPx / trackHeight) * 100);
+    stage.setAttribute('aria-valuenow', String(pct));
+    hint.style.opacity = pct > 8 ? '0' : '1';
+  }
+
+  function setY(newY, animate){
+    y = Math.max(0, Math.min(newY, trackHeight));
+    if(animate){
+      pull.style.transition = 'top .5s cubic-bezier(.2,.8,.2,1)';
+      cover.style.transition = 'clip-path .5s cubic-bezier(.2,.8,.2,1)';
+      seam.style.transition = 'top .5s cubic-bezier(.2,.8,.2,1)';
+    } else {
+      pull.style.transition = 'none';
+      cover.style.transition = 'none';
+      seam.style.transition = 'none';
+    }
+    render();
+  }
+
+  function pointerDown(e){
+    dragging = true;
+    pull.setPointerCapture && e.pointerId != null && pull.setPointerCapture(e.pointerId);
+    setY(y, false);
+  }
+  function pointerMove(e){
+    if(!dragging) return;
+    var rect = stage.getBoundingClientRect();
+    var clientY = e.touches ? e.touches[0].clientY : e.clientY;
+    var rel = clientY - rect.top - 12;
+    setY(rel, false);
+  }
+  function pointerUp(){
+    dragging = false;
+  }
+
+  pull.addEventListener('pointerdown', pointerDown);
+  window.addEventListener('pointermove', pointerMove);
+  window.addEventListener('pointerup', pointerUp);
+  pull.addEventListener('touchstart', pointerDown, {passive:true});
+  window.addEventListener('touchmove', pointerMove, {passive:true});
+  window.addEventListener('touchend', pointerUp);
+
+  stage.addEventListener('keydown', function(e){
+    var step = trackHeight * 0.12;
+    if(e.key === 'ArrowDown' || e.key === 'ArrowRight'){ setY(y + step, true); e.preventDefault(); }
+    if(e.key === 'ArrowUp' || e.key === 'ArrowLeft'){ setY(y - step, true); e.preventDefault(); }
+  });
+
+  window.addEventListener('resize', function(){ measure(); render(); });
+  measure();
+  render();
+
+  if(!reduced){
+    setTimeout(function(){
+      setY(trackHeight * 0.22, true);
+      setTimeout(function(){ setY(0, true); }, 900);
+    }, 700);
+  }
+})();
+</script>
+
+</body>
+</html>

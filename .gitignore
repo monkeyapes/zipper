@@ -1,0 +1,30 @@
+# Addon source (hidden - use encode_addon.ps1/decode_addon.ps1)
+addon/
+android/app/src/main/assets/addon/
+
+# Build outputs
+build/
+android/app/build/
+android/.gradle/
+app/dist/
+app/build/
+app/build_watchdog/
+app/__pycache__/
+*.pyc
+*.spec
+
+# IDE
+.idea/
+*.iml
+.gradle/
+
+# OS
+Thumbs.db
+.DS_Store
+
+# Python
+__pycache__/
+*.egg-info/
+
+# Android local properties
+android/local.properties
