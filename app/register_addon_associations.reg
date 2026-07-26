@@ -1,6 +1,5 @@
 Windows Registry Editor Version 5.00
 
-; Register LocalName as handler for .mcaddon files
 [HKEY_CLASSES_ROOT\.mcaddon]
 @="LocalName.Addon"
 
@@ -8,12 +7,11 @@ Windows Registry Editor Version 5.00
 @="Minecraft Addon"
 
 [HKEY_CLASSES_ROOT\LocalName.Addon\shell\open\command]
-@="\"REPLACE_WITH_FULL_PATH_TO\\LocalName.exe\" \"%1\""
+@="\"D:\\minecraftluckyblcok\\localname_app\\build\\LocalName.exe\" \"%1\""
 
 [HKEY_CLASSES_ROOT\LocalName.Addon\DefaultIcon]
-@="REPLACE_WITH_FULL_PATH_TO\\LocalName.exe,0"
+@="\"D:\\minecraftluckyblcok\\localname_app\\build\\LocalName.exe\",0"
 
-; Register LocalName as handler for .mcpack files
 [HKEY_CLASSES_ROOT\.mcpack]
 @="LocalName.Pack"
 
@@ -21,12 +19,11 @@ Windows Registry Editor Version 5.00
 @="Minecraft Resource Pack"
 
 [HKEY_CLASSES_ROOT\LocalName.Pack\shell\open\command]
-@="\"REPLACE_WITH_FULL_PATH_TO\\LocalName.exe\" \"%1\""
+@="\"D:\\minecraftluckyblcok\\localname_app\\build\\LocalName.exe\" \"%1\""
 
 [HKEY_CLASSES_ROOT\LocalName.Pack\DefaultIcon]
-@="REPLACE_WITH_FULL_PATH_TO\\LocalName.exe,0"
+@="\"D:\\minecraftluckyblcok\\localname_app\\build\\LocalName.exe\",0"
 
-; Register LocalName as handler for .mcworld files
 [HKEY_CLASSES_ROOT\.mcworld]
 @="LocalName.World"
 
@@ -34,7 +31,7 @@ Windows Registry Editor Version 5.00
 @="Minecraft World"
 
 [HKEY_CLASSES_ROOT\LocalName.World\shell\open\command]
-@="\"REPLACE_WITH_FULL_PATH_TO\\LocalName.exe\" \"%1\""
+@="\"D:\\minecraftluckyblcok\\localname_app\\build\\LocalName.exe\" \"%1\""
 
 [HKEY_CLASSES_ROOT\LocalName.World\DefaultIcon]
-@="REPLACE_WITH_FULL_PATH_TO\\LocalName.exe,0"
+@="\"D:\\minecraftluckyblcok\\localname_app\\build\\LocalName.exe\",0"
