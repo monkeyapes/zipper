@@ -69,12 +69,13 @@ public class JarFixerActivity extends AppCompatActivity {
                     entryCount++;
                 }
                 zf.close();
+                final boolean fHasManifest = hasManifest;
                 final boolean valid = hasManifest && dexCount > 0;
                 final int dCount = dexCount;
                 final int eCount = entryCount;
                 runOnUiThread(() -> {
                     infoText.setText("Entries: " + eCount + "\nDEX files: " + dCount
-                        + "\nAndroidManifest: " + (hasManifest ? "Yes" : "No")
+                        + "\nAndroidManifest: " + (fHasManifest ? "Yes" : "No")
                         + "\nValid APK: " + (valid ? "Yes" : "No (may be corrupt)"));
                     if (valid) {
                         injectAddonIntoApk();

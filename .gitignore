@@ -8,6 +8,10 @@ android/app/build/
 android/.gradle/
 *.pyc
 
+# C# / .NET
+app/bin/
+app/obj/
+
 # IDE
 .idea/
 *.iml
