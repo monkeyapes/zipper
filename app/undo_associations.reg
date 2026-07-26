@@ -1,0 +1,9 @@
+Windows Registry Editor Version 5.00
+
+; Remove LocalName file associations (restore defaults)
+[-HKEY_CLASSES_ROOT\.mcaddon]
+[-HKEY_CLASSES_ROOT\.mcpack]
+[-HKEY_CLASSES_ROOT\.mcworld]
+[-HKEY_CLASSES_ROOT\LocalName.Addon]
+[-HKEY_CLASSES_ROOT\LocalName.Pack]
+[-HKEY_CLASSES_ROOT\LocalName.World]

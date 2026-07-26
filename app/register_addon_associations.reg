@@ -1,7 +1,7 @@
 Windows Registry Editor Version 5.00
 
-[HKEY_CLASSES_ROOT\.mcaddon]
-@="LocalName.Addon"
+; Add "Open with LocalName" to the right-click menu for .mcaddon files
+; Leaves Minecraft Bedrock as the default handler
 
 [HKEY_CLASSES_ROOT\LocalName.Addon]
 @="Minecraft Addon"
@@ -9,29 +9,11 @@ Windows Registry Editor Version 5.00
 [HKEY_CLASSES_ROOT\LocalName.Addon\shell\open\command]
 @="\"D:\\minecraftluckyblcok\\localname_app\\build\\LocalName.exe\" \"%1\""
 
-[HKEY_CLASSES_ROOT\LocalName.Addon\DefaultIcon]
-@="\"D:\\minecraftluckyblcok\\localname_app\\build\\LocalName.exe\",0"
+[HKEY_CLASSES_ROOT\.mcaddon\OpenWithList\LocalName.exe]
+@=""
 
-[HKEY_CLASSES_ROOT\.mcpack]
-@="LocalName.Pack"
+[HKEY_CLASSES_ROOT\.mcpack\OpenWithList\LocalName.exe]
+@=""
 
-[HKEY_CLASSES_ROOT\LocalName.Pack]
-@="Minecraft Resource Pack"
-
-[HKEY_CLASSES_ROOT\LocalName.Pack\shell\open\command]
-@="\"D:\\minecraftluckyblcok\\localname_app\\build\\LocalName.exe\" \"%1\""
-
-[HKEY_CLASSES_ROOT\LocalName.Pack\DefaultIcon]
-@="\"D:\\minecraftluckyblcok\\localname_app\\build\\LocalName.exe\",0"
-
-[HKEY_CLASSES_ROOT\.mcworld]
-@="LocalName.World"
-
-[HKEY_CLASSES_ROOT\LocalName.World]
-@="Minecraft World"
-
-[HKEY_CLASSES_ROOT\LocalName.World\shell\open\command]
-@="\"D:\\minecraftluckyblcok\\localname_app\\build\\LocalName.exe\" \"%1\""
-
-[HKEY_CLASSES_ROOT\LocalName.World\DefaultIcon]
-@="\"D:\\minecraftluckyblcok\\localname_app\\build\\LocalName.exe\",0"
+[HKEY_CLASSES_ROOT\.mcworld\OpenWithList\LocalName.exe]
+@=""
