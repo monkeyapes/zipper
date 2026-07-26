@@ -3,94 +3,23 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:padding="16dp">
+    android:gravity="center"
+    android:padding="24dp">
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Zipper"
-        android:textSize="24sp"
+        android:textSize="28sp"
         android:textStyle="bold"
-        android:layout_marginBottom="4dp"/>
+        android:layout_marginBottom="8dp"/>
 
     <TextView
         android:id="@+id/statusText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Protection Active"
-        android:textSize="14sp"
-        android:layout_marginBottom="12dp"/>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:gravity="center_vertical"
-        android:layout_marginBottom="16dp">
-
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="Protection Active"
-            android:textSize="16sp"/>
-
-        <Switch
-            android:id="@+id/enableSwitch"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
-    </LinearLayout>
-
-    <TextView
-        android:id="@+id/worldCount"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Searching for worlds..."
-        android:textSize="14sp"
-        android:layout_marginBottom="12dp"/>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_marginBottom="16dp">
-
-        <Button
-            android:id="@+id/injectAllBtn"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="Inject All Worlds"
-            android:layout_marginEnd="4dp"
-            android:enabled="false"/>
-
-        <Button
-            android:id="@+id/removeAllBtn"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="Remove From All"
-            android:layout_marginStart="4dp"
-            android:enabled="false"/>
-    </LinearLayout>
-
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="#33FFFFFF"
-        android:layout_marginVertical="8dp"/>
-
-    <Button
-        android:id="@+id/zipBtn"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Open ZIP"
-        android:layout_marginBottom="8dp"/>
-
-    <Button
-        android:id="@+id/jarFixerBtn"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="JAR/APK Fixer"/>
+        android:text="Starting..."
+        android:textSize="16sp"
+        android:gravity="center"/>
 
 </LinearLayout>

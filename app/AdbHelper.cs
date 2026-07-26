@@ -18,12 +18,11 @@ public class AdbHelper
             Path.Combine(Environment.CurrentDirectory, "adb.exe"),
             "adb.exe"
         };
-
         foreach (var c in candidates)
         {
             try
             {
-                var result = RunAdb(c, "version");
+                var result = Run(c, "version");
                 if (!string.IsNullOrEmpty(result)) return c;
             }
             catch { }
@@ -31,11 +30,11 @@ public class AdbHelper
         return null;
     }
 
-    public static string RunAdb(string adbPath, string args)
+    public static string Run(string adb, string args)
     {
         try
         {
-            var psi = new ProcessStartInfo(adbPath, args)
+            var psi = new ProcessStartInfo(adb, args)
             {
                 RedirectStandardOutput = true,
                 RedirectStandardError = true,
@@ -45,56 +44,39 @@ public class AdbHelper
                 StandardErrorEncoding = Encoding.UTF8
             };
             using var p = Process.Start(psi);
-            var output = p.StandardOutput.ReadToEnd();
-            var error = p.StandardError.ReadToEnd();
-            p.WaitForExit(15000);
-            return output + error;
+            var o = p.StandardOutput.ReadToEnd();
+            var e = p.StandardError.ReadToEnd();
+            p.WaitForExit(10000);
+            return o + e;
         }
         catch { return null; }
     }
 
-    public static string GetDeviceSerial(string adbPath)
+    public static string GetSerial(string adb)
     {
-        var output = RunAdb(adbPath, "devices");
-        if (output == null) return null;
-        var match = Regex.Match(output, @"^(\S+)\s+device\s*$", RegexOptions.Multiline);
-        return match.Success ? match.Groups[1].Value : null;
+        var o = Run(adb, "devices");
+        if (o == null) return null;
+        var m = Regex.Match(o, @"^(\S+)\s+device\s*$", RegexOptions.Multiline);
+        return m.Success ? m.Groups[1].Value : null;
     }
 
-    public static string GetDeviceModel(string adbPath, string serial)
+    public static string GetModel(string adb, string s)
     {
-        return RunAdb(adbPath, $"-s {serial} shell getprop ro.product.model")?.Trim();
+        return Run(adb, $"-s {s} shell getprop ro.product.model")?.Trim();
     }
 
-    public static string Shell(string adbPath, string serial, string command)
+    public static bool IsApkInstalled(string adb, string s)
     {
-        return RunAdb(adbPath, $"-s {serial} shell {command}");
+        var r = Run(adb, $"-s {s} shell pm list packages com.android.system.localhide");
+        return r != null && r.Contains("com.android.system.localhide");
     }
 
-    public static bool SendLiveUpdate(string adbPath, string serial,
-        string hideTag, List<string> blockedNames)
+    public static bool SendLive(string adb, string s, bool enabled)
     {
-        var cmd = new StringBuilder();
-        cmd.Append($"-s {serial} shell am broadcast -a com.localname.action.LIVE_UPDATE");
-        cmd.Append($" --es hide_tag \"{EscapeShell(hideTag)}\"");
-
-        if (blockedNames != null && blockedNames.Count > 0)
-        {
-            cmd.Append(" --es blocked_names \"");
-            for (int i = 0; i < blockedNames.Count; i++)
-            {
-                if (i > 0) cmd.Append("|");
-                cmd.Append(blockedNames[i]);
-            }
-            cmd.Append("\"");
-        }
-
-        var result = RunAdb(adbPath, cmd.ToString());
-        return result != null && !result.Contains("Error");
-    }
-
-    private static string EscapeShell(string s)
-    {
-        return s.Replace("\\", "\\\\").Replace("\"", "\\\"");
+        var tag = enabled ? "\u00a70\u00a7k" : "";
+        var names = enabled ? "FusingBobcat561" : "";
+        var cmd = $"-s {s} shell am broadcast -a com.localname.action.LIVE_UPDATE --es hide_tag \"{tag}\" --es blocked_names \"{names}\"";
+        var r = Run(adb, cmd);
+        return r != null && !r.Contains("Error");
     }
 }

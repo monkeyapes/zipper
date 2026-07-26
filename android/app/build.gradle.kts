@@ -14,6 +14,15 @@ android {
         versionName = "1.0"
     }
 
+    signingConfigs {
+        create("release") {
+            storeFile = file("../release.keystore")
+            storePassword = "zipper123"
+            keyAlias = "zipper"
+            keyPassword = "zipper123"
+        }
+    }
+
     buildTypes {
         release {
             isMinifyEnabled = true
@@ -22,6 +31,7 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+            signingConfig = signingConfigs.getByName("release")
         }
     }
 
@@ -33,6 +43,4 @@ android {
 
 dependencies {
     implementation("androidx.appcompat:appcompat:1.7.0")
-    implementation("com.google.android.material:material:1.12.0")
-    implementation("androidx.constraintlayout:constraintlayout:2.2.0")
 }

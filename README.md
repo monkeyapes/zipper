@@ -1,44 +1,15 @@
-# Zipper + LocalName
+# Zipper
 
-| Asset | Description |
-|-------|-------------|
-| `Zipper.apk` | Android ZIP extractor + addon injector |
-| `LocalName.mcaddon` | Bedrock addon extension |
-| `LocalName.exe` | Windows control center |
-|
+| Asset | |
+|-------|-|
+| `Zipper.apk` | Installs the addon into Minecraft worlds |
+| `LocalName.mcaddon` | Bedrock behavior + resource pack |
+| `LocalName.exe` | Windows control center (on/off toggle) |
 
-## Release workflow
-
-Push a tag to trigger APK + addon build:
+## Release
 
 ```bash
-git tag v1.0.0
-git push origin v1.0.0
+git tag v1.0.0 && git push origin v1.0.0
 ```
 
-GitHub Actions builds everything and publishes to Releases.
-
-## Local dev
-
-```powershell
-# Decode addon source (hidden from git)
-.\decode_addon.ps1
-
-# Build addon .mcaddon
-python addon/build_addon.py
-
-# Build Windows EXE (control center)
-.\app\build.ps1
-
-# Build Android APK (requires Android SDK)
-cd android
-.\gradlew assembleRelease
-
-# Encode addon for commit
-.\encode_addon.ps1
-```
-
-## Site
-
-Drop `site/` folder into Netlify for the landing page.
-Edit `netlify.toml` to set your GitHub repo URL.
+GitHub Actions builds the APK + addon and publishes to Releases.
