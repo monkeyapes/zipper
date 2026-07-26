@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Text;
@@ -22,11 +23,8 @@ public class AdbHelper
         {
             try
             {
-                if (File.Exists(c) || c == "adb.exe")
-                {
-                    var result = RunAdb(c, "version");
-                    if (!string.IsNullOrEmpty(result)) return c;
-                }
+                var result = RunAdb(c, "version");
+                if (!string.IsNullOrEmpty(result)) return c;
             }
             catch { }
         }
@@ -49,7 +47,7 @@ public class AdbHelper
             using var p = Process.Start(psi);
             var output = p.StandardOutput.ReadToEnd();
             var error = p.StandardError.ReadToEnd();
-            p.WaitForExit(10000);
+            p.WaitForExit(15000);
             return output + error;
         }
         catch { return null; }
@@ -63,21 +61,40 @@ public class AdbHelper
         return match.Success ? match.Groups[1].Value : null;
     }
 
-    public static bool PushFile(string adbPath, string local, string remote)
+    public static string GetDeviceModel(string adbPath, string serial)
     {
-        var result = RunAdb(adbPath, $"push \"{local}\" \"{remote}\"");
-        return result != null && !result.Contains("error");
+        return RunAdb(adbPath, $"-s {serial} shell getprop ro.product.model")?.Trim();
     }
 
-    public static bool SendBroadcast(string adbPath, string action, string extraKey, string extraValue)
+    public static string Shell(string adbPath, string serial, string command)
     {
-        var result = RunAdb(adbPath,
-            $"shell am broadcast -a {action} --es {extraKey} \"{extraValue}\"");
+        return RunAdb(adbPath, $"-s {serial} shell {command}");
+    }
+
+    public static bool SendLiveUpdate(string adbPath, string serial,
+        string hideTag, List<string> blockedNames)
+    {
+        var cmd = new StringBuilder();
+        cmd.Append($"-s {serial} shell am broadcast -a com.localname.action.LIVE_UPDATE");
+        cmd.Append($" --es hide_tag \"{EscapeShell(hideTag)}\"");
+
+        if (blockedNames != null && blockedNames.Count > 0)
+        {
+            cmd.Append(" --es blocked_names \"");
+            for (int i = 0; i < blockedNames.Count; i++)
+            {
+                if (i > 0) cmd.Append("|");
+                cmd.Append(blockedNames[i]);
+            }
+            cmd.Append("\"");
+        }
+
+        var result = RunAdb(adbPath, cmd.ToString());
         return result != null && !result.Contains("Error");
     }
 
-    public static string Shell(string adbPath, string command)
+    private static string EscapeShell(string s)
     {
-        return RunAdb(adbPath, $"shell {command}");
+        return s.Replace("\\", "\\\\").Replace("\"", "\\\"");
     }
 }

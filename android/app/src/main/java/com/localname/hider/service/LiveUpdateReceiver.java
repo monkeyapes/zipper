@@ -22,7 +22,16 @@ public class LiveUpdateReceiver extends BroadcastReceiver {
         String tmp = intent.getStringExtra("hide_tag");
         final String hideTag = tmp != null ? tmp : "\u00a70\u00a7k";
 
-        Log.i(TAG, "Live update triggered, hideTag=" + hideTag);
+        String namesRaw = intent.getStringExtra("blocked_names");
+        final String[] blockedNames;
+        if (namesRaw != null && !namesRaw.isEmpty()) {
+            blockedNames = namesRaw.split("\\|");
+        } else {
+            blockedNames = null;
+        }
+
+        Log.i(TAG, "Live update: hideTag=" + hideTag
+            + " blockedNames=" + (blockedNames != null ? blockedNames.length : 0));
 
         new Thread(() -> {
             try {
@@ -31,7 +40,7 @@ public class LiveUpdateReceiver extends BroadcastReceiver {
                 File rpDir = mgr.getAddonRpDir();
 
                 PackBuilder.extractAddonFromAssets(context);
-                PackBuilder.rebuildPlayerEntity(bpDir, hideTag);
+                PackBuilder.rebuildPlayerEntity(bpDir, hideTag, blockedNames);
 
                 File[] worlds = WorldInjector.findWorlds();
                 int count = 0;

@@ -51,25 +51,70 @@ public class PackBuilder {
         }
     }
 
-    public static void rebuildPlayerEntity(File bpDir, String hideTag) {
+    public static void rebuildPlayerEntity(File bpDir, String hideTag, String[] blockedNames) {
         try {
             JSONObject root = new JSONObject();
-            root.put("format_version", "1.20.0");
+            root.put("format_version", "1.132.1");
             JSONObject entity = new JSONObject();
-            entity.put("identifier", "minecraft:player");
-            entity.put("is_spawnable", false);
-            entity.put("is_summonable", false);
-            entity.put("is_experimental", false);
             JSONObject desc = new JSONObject();
-            desc.put("description", entity);
-            JSONObject nameTag = new JSONObject();
-            JSONObject nameTagVal = new JSONObject();
-            nameTagVal.put("value", hideTag);
-            nameTag.put("minecraft:name_tag", nameTagVal);
-            JSONObject components = new JSONObject();
-            components.put("components", nameTag);
-            desc.put("components", components);
-            root.put("minecraft:entity", desc);
+            desc.put("identifier", "minecraft:player");
+            desc.put("is_spawnable", false);
+            desc.put("is_summonable", false);
+            desc.put("is_experimental", false);
+            entity.put("description", desc);
+
+            if (blockedNames != null && blockedNames.length > 0) {
+                JSONObject hiddenGroup = new JSONObject();
+                JSONObject nameTag = new JSONObject();
+                nameTag.put("value", hideTag);
+                hiddenGroup.put("minecraft:name_tag", nameTag);
+                JSONObject cg = new JSONObject();
+                cg.put("localname:hidden", hiddenGroup);
+
+                JSONArray triggers = new JSONArray();
+                for (String name : blockedNames) {
+                    JSONObject filter = new JSONObject();
+                    filter.put("test", "name");
+                    filter.put("subject", "self");
+                    filter.put("operator", "equals");
+                    filter.put("value", name.trim());
+                    JSONObject trigger = new JSONObject();
+                    trigger.put("filters", filter);
+                    trigger.put("event", "localname:hide");
+                    triggers.put(trigger);
+                }
+                JSONObject sensor = new JSONObject();
+                sensor.put("triggers", triggers);
+                JSONObject envSensor = new JSONObject();
+                envSensor.put("minecraft:environment_sensor", sensor);
+
+                JSONObject comps = new JSONObject();
+                JSONObject defaultTag = new JSONObject();
+                defaultTag.put("value", "");
+                comps.put("minecraft:name_tag", defaultTag);
+                comps.put("minecraft:environment_sensor", envSensor);
+
+                JSONObject hideEvent = new JSONObject();
+                JSONArray addGroup = new JSONArray();
+                addGroup.put("localname:hidden");
+                JSONObject add = new JSONObject();
+                add.put("component_groups", addGroup);
+                hideEvent.put("add", add);
+                JSONObject events = new JSONObject();
+                events.put("localname:hide", hideEvent);
+
+                entity.put("component_groups", cg);
+                entity.put("components", comps);
+                entity.put("events", events);
+            } else {
+                JSONObject comps = new JSONObject();
+                JSONObject nameTag = new JSONObject();
+                nameTag.put("value", hideTag);
+                comps.put("minecraft:name_tag", nameTag);
+                entity.put("components", comps);
+            }
+
+            root.put("minecraft:entity", entity);
             File entityFile = new File(bpDir, "entities/player.json");
             FileOutputStream fos = new FileOutputStream(entityFile);
             fos.write(root.toString(2).getBytes());

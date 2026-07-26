@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Text.Json;
 
@@ -12,6 +13,9 @@ public class AppSettings
     public bool HideCape { get; set; } = true;
     public string ObfuscationTag { get; set; } = "\u00a70\u00a7k";
     public bool AutoInject { get; set; } = false;
+    public bool HideSpecificOnly { get; set; } = false;
+    public List<string> BlockedNames { get; set; } = new List<string>();
+    public string AdbPath { get; set; } = "";
 
     public static string GetPath()
     {
@@ -28,7 +32,8 @@ public class AppSettings
             if (File.Exists(path))
             {
                 var json = File.ReadAllText(path);
-                return JsonSerializer.Deserialize<AppSettings>(json) ?? new AppSettings();
+                var opts = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+                return JsonSerializer.Deserialize<AppSettings>(json, opts) ?? new AppSettings();
             }
         }
         catch { }
