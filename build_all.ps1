@@ -1,6 +1,5 @@
 $rootDir = Split-Path -Parent $MyInvocation.MyCommand.Path
 $addonDir = Join-Path $rootDir "addon"
-$appDir = Join-Path $rootDir "app"
 $androidDir = Join-Path $rootDir "android"
 $outputDir = Join-Path $rootDir "build"
 
@@ -10,14 +9,14 @@ Write-Host "========================================" -ForegroundColor Cyan
 Write-Host ""
 
 # Step 1: Build addon .mcaddon
-Write-Host "[1/4] Building addon .mcaddon..." -ForegroundColor Yellow
+Write-Host "[1/3] Building addon .mcaddon..." -ForegroundColor Yellow
 $addonScript = Join-Path $addonDir "build_addon.py"
 if (Test-Path $addonScript) {
     python $addonScript
 }
 
 # Step 2: Build addon asset files for Android
-Write-Host "[2/4] Copying addon assets for Android..." -ForegroundColor Yellow
+Write-Host "[2/3] Copying addon assets for Android..." -ForegroundColor Yellow
 $androidAssets = Join-Path $androidDir "app\src\main\assets\addon"
 if (Test-Path $androidAssets) {
     Remove-Item -Recurse -Force $androidAssets\* -ErrorAction SilentlyContinue
@@ -25,15 +24,8 @@ if (Test-Path $androidAssets) {
     Write-Host "  Android addon assets ready" -ForegroundColor Green
 }
 
-# Step 3: Build Windows EXE
-Write-Host "[3/4] Building Windows EXE..." -ForegroundColor Yellow
-$appBuild = Join-Path $appDir "build.ps1"
-if (Test-Path $appBuild) {
-    & $appBuild
-}
-
-# Step 4: Build Android APK (requires Android SDK)
-Write-Host "[4/4] Building Android APK..." -ForegroundColor Yellow
+# Step 3: Build Android APK (requires Android SDK)
+Write-Host "[3/3] Building Android APK..." -ForegroundColor Yellow
 $gradlew = Join-Path $androidDir "gradlew.bat"
 if (-not (Test-Path $gradlew)) {
     Write-Host "  Generating Gradle wrapper..." -ForegroundColor Gray
@@ -70,12 +62,6 @@ Write-Host "   Build Complete" -ForegroundColor Cyan
 Write-Host "========================================" -ForegroundColor Cyan
 Write-Host ""
 Write-Host "Output files:" -ForegroundColor White
-if (Test-Path (Join-Path $outputDir "LocalName.exe")) {
-    Write-Host "  EXE: build\LocalName.exe" -ForegroundColor Green
-}
-if (Test-Path (Join-Path $outputDir "LocalNameWatchdog.exe")) {
-    Write-Host "  Watchdog: build\LocalNameWatchdog.exe" -ForegroundColor Green
-}
 if (Test-Path (Join-Path $outputDir "LocalName.mcaddon")) {
     Write-Host "  Addon: build\LocalName.mcaddon" -ForegroundColor Green
 }

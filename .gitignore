@@ -6,12 +6,7 @@ android/app/src/main/assets/addon/
 build/
 android/app/build/
 android/.gradle/
-app/dist/
-app/build/
-app/build_watchdog/
-app/__pycache__/
 *.pyc
-*.spec
 
 # IDE
 .idea/
