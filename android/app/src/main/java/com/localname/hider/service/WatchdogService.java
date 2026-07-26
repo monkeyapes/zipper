@@ -83,7 +83,7 @@ public class WatchdogService extends Service {
             if (!new File(bpDir, "entities/player.json").exists() ||
                 !new File(rpDir, "entity/player.entity.json").exists()) {
                 PackBuilder.extractAddonFromAssets(this);
-                PackBuilder.rebuildPlayerEntity(bpDir, addonManager.getHideTag());
+                PackBuilder.rebuildPlayerEntity(bpDir, addonManager.getHideTag(), null);
             }
 
             File[] worlds = WorldInjector.findWorlds();
